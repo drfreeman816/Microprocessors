@@ -1,7 +1,7 @@
 Instruction set:
 NOP
 MOVLW L		; W = L
-ADDW L		; W = W + L	
+ADDW L		; W = W + L
 SUBW L		; W = W - L
 ANDW L		; W = W && L
 ORW L		; W = W || L
@@ -49,3 +49,22 @@ MOVLW 0x01	; W = 1
 ADDF 0x20	; W = W + [0x20]
 MOVWF 0x20	; [0x20] = W
 GOTO 0x04
+
+Sum two 8-bit words using a 4-bit bus:
+            ; A = A1 A2
+            ; B = B1 B2
+NOP
+MOVLW A2    ; W = A2
+ADDW B2     ; W = W + B2
+MOVWF 0x21  ; [0x21] = W
+MOVLW A1    ; W = A1
+BTFSS 0x00  ; Skip if carry
+GOTO (NC)
+ADDW B1     ; W = W + B1
+ADDW 0x01   ; W = W + 1
+GOTO (SAVE)
+NC:
+ADDW B1     ; W = W + B1
+SAVE:
+MOVWF 0x20  ; [0x20] = W
+(END)
